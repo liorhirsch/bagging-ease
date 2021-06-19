@@ -86,6 +86,16 @@ class TorchEASE:
 
         return
 
+    def predict(self, pred_df, k=5):
+        all_preds = []
+        for name, group in pred_df.groupby(self.user_col):
+            curr_X = torch.zeros((group.shape[0], self.B.shape[0]))
+            curr_X[torch.arange(group.shape[0]), group[self.item_col]] = 1
+            _preds_tensor = curr_X @ self.B
+            all_preds.append([name, _preds_tensor.topk(k).indices.tolist()])
+
+
+
     def predict_all(self, pred_df, k=5, remove_owned=True):
         """
         :param pred_df: DataFrame of users that need predictions
