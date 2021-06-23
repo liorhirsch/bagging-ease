@@ -4,7 +4,7 @@ from os.path import join
 from glob import glob
 from TorchEASE.src.main.EASE import TorchEASE
 
-data_path = '../data/msd/pro_sg'
+data_path = 'data/msd/pro_sg'
 
 train_df = pd.read_csv(join(data_path, f"train.csv"))
 

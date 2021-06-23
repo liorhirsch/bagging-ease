@@ -92,7 +92,7 @@ class TorchEASE:
             curr_X = torch.zeros((group.shape[0], self.B.shape[0]))
             curr_X[torch.arange(group.shape[0]), group[self.item_col].to_numpy()] = 1
             _preds_tensor = curr_X @ self.B
-            all_preds.append([name, _preds_tensor.topk(k, dim=1, sorted=True).indices.tolist()])
+            all_preds.append([name, _preds_tensor.topk(k, dim=0, sorted=True).indices.tolist()])
 
         return all_preds
 
