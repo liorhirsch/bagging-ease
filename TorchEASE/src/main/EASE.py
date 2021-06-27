@@ -86,16 +86,20 @@ class TorchEASE:
 
         return
 
-    def predict(self, pred_df, k=5):
-        all_preds = []
-        for name, group in pred_df.groupby(self.user_col):
-            curr_X = torch.zeros((group.shape[0], self.B.shape[0]))
-            curr_X[torch.arange(group.shape[0]), group[self.item_col].to_numpy()] = 1
-            _preds_tensor = curr_X @ self.B
-            all_preds.append([name, _preds_tensor.topk(k, dim=0, sorted=True).indices.tolist()])
+    def predict(self, df, k=5):
+        df_copy = df.copy()
+        unique_users = df_copy.uid.unique()
+        unique_user_id_to_new = dict(zip(unique_users, range(len(unique_users))))
+        df_copy['new_uid'] = df_copy.uid.apply(unique_user_id_to_new.get)
+        df_copy = df_copy[['new_uid', 'sid']]
 
-        return all_preds
+        interaction_size = torch.Size([len(unique_user_id_to_new), df_copy.sid.nunique()])
 
+        df_interactions = torch.sparse.FloatTensor(torch.LongTensor(df_copy.values).t(),
+                                                   torch.ones(df_copy.shape[0]),
+                                                   interaction_size).to_dense()
+
+        return (df_interactions @ self.B).topk(k).indices
 
 
     def predict_all(self, pred_df, k=5, remove_owned=True):
