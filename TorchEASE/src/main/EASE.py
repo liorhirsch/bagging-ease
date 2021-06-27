@@ -93,7 +93,10 @@ class TorchEASE:
         df_copy['new_uid'] = df_copy.uid.apply(unique_user_id_to_new.get)
         df_copy = df_copy[['new_uid', 'sid']]
 
+
         interaction_size = torch.Size([len(unique_user_id_to_new), df_copy.sid.nunique()])
+
+        return df_copy, interaction_size
 
         df_interactions = torch.sparse.FloatTensor(torch.LongTensor(df_copy.values).t(),
                                                    torch.ones(df_copy.shape[0]),
