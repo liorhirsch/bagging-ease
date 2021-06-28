@@ -100,7 +100,7 @@ class TorchEASE:
                                                    torch.ones(df_copy.shape[0]),
                                                    interaction_size).to_dense()
 
-        return (df_interactions @ self.B).topk(k).indices
+        return (df_interactions @ self.B).topk(k, sorted=True).indices
 
 
     def predict_all(self, pred_df, k=5, remove_owned=True):
